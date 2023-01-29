@@ -1,4 +1,4 @@
-baseURL = 'http://notes.grayside.dev/'
+baseURL = 'https://notes.grayside.dev/'
 languageCode = 'en-us'
 title = 'Notes'
 
