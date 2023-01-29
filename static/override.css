@@ -1,0 +1,7 @@
+h1.post-title::before {
+    content: "$ > "
+}
+
+header a div.logo::before {
+    content: ":: "
+}

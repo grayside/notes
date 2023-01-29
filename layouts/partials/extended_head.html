@@ -1,0 +1,5 @@
+<!-- Custom CSS to override theme properties (/static/override.css) -->
+{{- if (fileExists "static/override.css") -}}
+  {{ $overrideStyles := resources.Get "override.css" | fingerprint }}
+  <link rel="stylesheet" href="{{ $overrideStyles.Permalink }}" fingerprint="{{ $overrideStyles.Data.Integrity }}">
+{{- end -}}
