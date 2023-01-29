@@ -1,0 +1,68 @@
+<!doctype html><html lang=en><head><title>Fighting the Forward Slashes with Go's MapFS :: Notes by Grayside</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Avoiding Go testing/fstest.MapFS crashes on absolute paths."><meta name=keywords content="golang,testing"><meta name=robots content="noodp"><link rel=canonical href=http://notes.grayside.dev/posts/go/mapfs-forward-slash/><link rel=stylesheet href=http://notes.grayside.dev/css/orange-local.css><link rel="shortcut icon" href=http://notes.grayside.dev/img/theme-colors/orange.png><link rel=apple-touch-icon href=http://notes.grayside.dev/img/theme-colors/orange.png><meta name=twitter:card content="summary"><meta name=twitter:site content="notes.grayside.dev"><meta name=twitter:creator content><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="og:title" content="Fighting the Forward Slashes with Go's MapFS"><meta property="og:description" content="Avoiding Go testing/fstest.MapFS crashes on absolute paths."><meta property="og:url" content="http://notes.grayside.dev/posts/go/mapfs-forward-slash/"><meta property="og:site_name" content="Notes by Grayside"><meta property="og:image" content="http://notes.grayside.dev/"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="627"><meta property="article:published_time" content="2023-01-28 11:34:34 -0800 -0800"><link rel=stylesheet href=http://notes.grayside.dev/override.e21dd114395c0dc676debb1974e94e71df75cb14dc7f8cc7f05481cdf9b716b0.css fingerprint="sha256-4h3RFDlcDcZ23rsZdOlOcd91yxTcf4zH8FSBzfm3FrA="></head><body class=orange><div class=container><header class=header><div class=header__inner><div class=header__logo><a href=/><div class=logo>Notes</div></a></div></div></header><div class=content><article class=post><h1 class=post-title><a href=http://notes.grayside.dev/posts/go/mapfs-forward-slash/>Fighting the Forward Slashes with Go&rsquo;s MapFS</a></h1><div class=post-meta><time class=post-date>2023-01-28 ::
+[Updated :: 2023-01-28]</time>
+<span class=post-reading-time>:: 3 min read (449 words)</span></div><span class=post-tags>#<a href=http://notes.grayside.dev/tags/til/>til</a>&nbsp;
+#<a href=http://notes.grayside.dev/tags/golang/>golang</a>&nbsp;
+#<a href=http://notes.grayside.dev/tags/testing/>testing</a>&nbsp;
+#<a href=http://notes.grayside.dev/tags/bug/>bug</a>&nbsp;</span><div class=post-content><div><p>Today I&rsquo;m recounting my adventures in using MapFS to write unit tests for code
+that walks filesystems defined using io/fs.FS. MapFS is easy to start with, but
+there is a rough edge if you try to define absolute paths in your map.</p><p>I assumed I should use absolute paths. When my tests started to segfault, it was
+very confusing.</p><p>I found <a href=https://github.com/golang/go/issues/34591>go/issues/34591</a> which seems
+to describe the same problem, but is not about the fstest package implementation.</p><h2 id=solution-1-ubiquitous-warning>Solution 1: Ubiquitous Warning<a href=#solution-1-ubiquitous-warning class=hanchor arialabel=Anchor>&#8983;</a></h2><p>To make sure I don&rsquo;t forget this problem, preface each MapFS instantiation
+with this comment:</p><pre tabindex=0><code>// WARNING: Paths that start with leading slashes give stack overflows.
+// Closest issue I&#39;ve tracked down: https://github.com/golang/go/issues/34591
+</code></pre><p>I really appreciate well explained code, but it&rsquo;s better for orienting new
+developers than reminding yourself of a problem: I will get used to not reading
+this comment, and that habit will probably stick with me longer than my recollection
+of the problem.</p><h2 id=solution-2-validate-the-map>Solution 2: Validate the Map<a href=#solution-2-validate-the-map class=hanchor arialabel=Anchor>&#8983;</a></h2><p>You could implement a constructor or validation function like
+<code>validateMapFS(fstest.MapFS) error</code>, but this doesn&rsquo;t seem that much better than
+the comment and requires just as much remembering to take an extra step.</p><p>Since a MapFS is a <code>map</code>, this might look like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>validateMapFS</span>(<span style=color:#a6e22e>m</span> <span style=color:#a6e22e>fstest</span>.<span style=color:#a6e22e>MapFS</span>) <span style=color:#66d9ef>error</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>k</span>, <span style=color:#a6e22e>_</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>m</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>k</span>[<span style=color:#ae81ff>0</span>] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;/&#39;</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>New</span>(<span style=color:#e6db74>&#34;do not use absolute paths in MapFS, bad key &#34;</span> <span style=color:#f92672>+</span> <span style=color:#a6e22e>k</span>)
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=solution-3-test-case-utility>Solution 3: Test Case Utility<a href=#solution-3-test-case-utility class=hanchor arialabel=Anchor>&#8983;</a></h2><p>If I need to remember to do something, maybe the answer is to make it valuable
+in more than one way. My goal in using MapFS is not using MapFS. My goal is to
+define test cases for code that only cares about filesystem contents.</p><p>So what if I go back to writing my tests with clean table tests and use a helper
+to create the MapFS my code expects to receive?</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#f92672>package</span> <span style=color:#a6e22e>testhelper</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#e6db74>&#34;io/fs&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#e6db74>&#34;testing&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#e6db74>&#34;testing/fstest&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>TestCase</span> <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>path</span>    <span style=color:#66d9ef>string</span>
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>data</span>    <span style=color:#66d9ef>string</span>
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>want</span>    <span style=color:#66d9ef>string</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>NewMapFSFromTestCases</span>(<span style=color:#a6e22e>t</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>testing</span>.<span style=color:#a6e22e>T</span>, <span style=color:#a6e22e>testCases</span> []<span style=color:#a6e22e>TestCase</span>) <span style=color:#a6e22e>fs</span>.<span style=color:#a6e22e>FS</span> {
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>Helper</span>()
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>fsys</span> <span style=color:#f92672>:=</span> make(<span style=color:#a6e22e>fstest</span>.<span style=color:#a6e22e>MapFS</span>, len(<span style=color:#a6e22e>testCases</span>))
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>, <span style=color:#a6e22e>tc</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>testCases</span> {
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>tc</span>.<span style=color:#a6e22e>path</span>) <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span> {
+</span></span><span style=display:flex><span>			<span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>Fatalf</span>(<span style=color:#e6db74>&#34;no path specified for want %q&#34;</span>, <span style=color:#a6e22e>tc</span>.<span style=color:#a6e22e>want</span>)
+</span></span><span style=display:flex><span>			<span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>if</span> string(<span style=color:#a6e22e>tc</span>.<span style=color:#a6e22e>path</span>[<span style=color:#ae81ff>0</span>]) <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;/&#34;</span> {
+</span></span><span style=display:flex><span>			<span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>Fatal</span>(<span style=color:#e6db74>&#34;Invalid fstest.MapFS path: cannot start with leading slash. This is not documented as part of fstest.MapFS. See https://github.com/golang/go/issues/34591&#34;</span>)
+</span></span><span style=display:flex><span>			<span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>		<span style=color:#a6e22e>fsys</span>[<span style=color:#a6e22e>tc</span>.<span style=color:#a6e22e>path</span>] = <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>fstest</span>.<span style=color:#a6e22e>MapFile</span>{
+</span></span><span style=display:flex><span>			<span style=color:#a6e22e>Data</span>: []byte(<span style=color:#a6e22e>tc</span>.<span style=color:#a6e22e>data</span>),
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>fsys</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>In my test code, I define my test cases, call this function to generate the
+filesystem input for the function under test, then proceed with testing.</p><h2 id=nest-steps>Nest Steps<a href=#nest-steps class=hanchor arialabel=Anchor>&#8983;</a></h2><ul><li><input disabled type=checkbox> File a bug</li></ul><h2 id=background-references>Background References<a href=#background-references class=hanchor arialabel=Anchor>&#8983;</a></h2><ul><li><strong>Packages:</strong> <a href=https://pkg.go.dev/testing/fstest>testing/fstest</a></li><li><strong>Useful Article:</strong> <a href=https://bitfieldconsulting.com/golang/filesystems>Walking with filesystems: Go&rsquo;s new fs.FS interface</a></li></ul></div></div></article></div><footer class=footer><div class=footer__inner><div class="copyright copyright--user"><span>&copy;2023 Adam Ross :: Powered by <a href=http://gohugo.io>Hugo</a></span></span>
+<span>:: <a href=https://github.com/panr/hugo-theme-terminal target=_blank>Theme</a> made by <a href=https://github.com/panr target=_blank>panr</a></span></div></div></footer><script type=text/javascript src=/bundle.min.js></script></div></body></html>
