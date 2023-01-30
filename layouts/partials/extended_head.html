@@ -1,4 +1,7 @@
-<!-- Custom CSS to override theme properties (/static/override.css) -->
+{{/*
+ Custom CSS to override theme properties (/static/override.css)
+ https://johnjago.com/blog/cache-busting-hugo/
+*/}}
 {{- if (fileExists "static/override.css") -}}
   {{ $overrideStyles := resources.Get "override.css" | fingerprint }}
   <link rel="stylesheet" href="{{ $overrideStyles.Permalink }}" fingerprint="{{ $overrideStyles.Data.Integrity }}">
