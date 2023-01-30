@@ -1,17 +1,17 @@
-+++
-title = "Fighting the Forward Slashes with Go's MapFS"
-date = "2023-01-28T11:34:34-08:00"
-# author = ""
-authorTwitter = "" #do not include @
-cover = ""
-tags = ["til", "golang", "testing", "bug"]
-keywords = ["golang", "testing"]
-description = "Avoiding Go testing/fstest.MapFS crashes on absolute paths."
-showFullContent = false
-hideComments = false
-color = "orange" #["orange", "blue", "red", "green", "pink"]
-framed = true
-+++
+---
+title: "Fighting the Forward Slashes with Go's MapFS"
+date: "2023-01-28T11:34:34-08:00"
+# author: ""
+authorTwitter: "" #do not include @
+cover: ""
+tags: ["til", "golang", "testing", "bug"]
+keywords: ["golang", "testing"]
+description: "Avoiding Go testing/fstest.MapFS crashes on absolute paths."
+showFullContent: false
+hideComments: false
+color: "orange" #["orange", "blue", "red", "green", "pink"]
+framed: true
+---
 
 Today I'm recounting my adventures in using MapFS to write unit tests for code
 that walks filesystems defined using io/fs.FS. MapFS is easy to start with, but
