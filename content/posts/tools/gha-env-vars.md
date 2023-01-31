@@ -6,7 +6,9 @@ authorTwitter: "" #do not include @
 cover: ""
 tags: ["til", "gha", "testing", "environment", "shell"]
 keywords: ["", ""]
-description: ""
+description: |
+  When dynamically setting an environment variable in GitHub Actions,
+  use 'tee -a' to see the value at the same time as you set it.
 showFullContent: false
 color: "blue" # ["orange", "blue", "red", "green", "pink"]
 ---
