@@ -2,8 +2,6 @@
 #<a href=https://notes.grayside.dev/tags/gha/>gha</a>&nbsp;
 #<a href=https://notes.grayside.dev/tags/testing/>testing</a>&nbsp;
 #<a href=https://notes.grayside.dev/tags/environment/>environment</a>&nbsp;
-#<a href=https://notes.grayside.dev/tags/shell/>shell</a>&nbsp;</span><div class=post-content>In 2020 GitHub changed the recommended practice for dynamically setting environment variables because of a security vulnerability: GitHub Actions: Deprecating set-env and add-path commands I missed this until I noticed console warnings.
-However, sometimes I like to check the environment variable I&rsquo;ve just set, and this model of piping to a file inspired me.
-Instead of a simple append operation:
-name: Set Environment - run: echo "MY_VARIABLE=${PWD}/cool/data/path" >> $GITHUB_ENV You can both append and see the result by using tee -a:</div><div><a class="read-more button" href=/posts/tools/gha-env-vars/>Read more →</a></div></article><div class=pagination><div class=pagination__buttons></div></div></div></div><footer class=footer><div class=footer__inner><div class="copyright copyright--user"><span>&copy;2023 Adam Ross :: Powered by <a href=http://gohugo.io>Hugo</a></span></span>
+#<a href=https://notes.grayside.dev/tags/shell/>shell</a>&nbsp;</span><div class=post-content>When dynamically setting an environment variable in GitHub Actions,
+use &rsquo;tee -a&rsquo; to see the value at the same time as you set it.</div><div><a class="read-more button" href=/posts/tools/gha-env-vars/>Read more →</a></div></article><div class=pagination><div class=pagination__buttons></div></div></div></div><footer class=footer><div class=footer__inner><div class="copyright copyright--user"><span>&copy;2023 Adam Ross :: Powered by <a href=http://gohugo.io>Hugo</a></span></span>
 <span>:: <a href=https://github.com/panr/hugo-theme-terminal target=_blank>Theme</a> made by <a href=https://github.com/panr target=_blank>panr</a></span></div></div></footer><script type=text/javascript src=/bundle.min.js></script></div></body></html>
