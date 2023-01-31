@@ -6,8 +6,8 @@ variables because of a security vulnerability: &lt;a href="https://github.blog/c
 this model of piping to a file inspired me.&lt;/p>
 &lt;p>Instead of a simple append operation:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">Set Environment&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- &lt;span style="color:#f92672">run&lt;/span>: &lt;span style="color:#ae81ff">echo &amp;#34;MY_VARIABLE=${PWD}/cool/data/path}&amp;#34; &amp;gt;&amp;gt; $GITHUB_ENV&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- &lt;span style="color:#f92672">run&lt;/span>: &lt;span style="color:#ae81ff">echo &amp;#34;MY_VARIABLE=${PWD}/cool/data/path&amp;#34; &amp;gt;&amp;gt; $GITHUB_ENV&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>You can both append and see the result by using &lt;code>tee -a&lt;/code>:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">Set Environment&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- &lt;span style="color:#f92672">run&lt;/span>: &lt;span style="color:#ae81ff">echo &amp;#34;MY_VARIABLE=${PWD}/cool/data/path}&amp;#34; | tee -a $GITHUB_ENV&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- &lt;span style="color:#f92672">run&lt;/span>: &lt;span style="color:#ae81ff">echo &amp;#34;MY_VARIABLE=${PWD}/cool/data/path&amp;#34; | tee -a $GITHUB_ENV&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item></channel></rss>
