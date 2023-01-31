@@ -24,12 +24,12 @@ Instead of a simple append operation:
 
 ```yaml
 name: Set Environment
--  run: echo "MY_VARIABLE=${PWD}/cool/data/path}" >> $GITHUB_ENV
+-  run: echo "MY_VARIABLE=${PWD}/cool/data/path" >> $GITHUB_ENV
 ```
 
 You can both append and see the result by using `tee -a`:
 
 ```yaml
 name: Set Environment
--  run: echo "MY_VARIABLE=${PWD}/cool/data/path}" | tee -a $GITHUB_ENV
+-  run: echo "MY_VARIABLE=${PWD}/cool/data/path" | tee -a $GITHUB_ENV
 ```
