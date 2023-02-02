@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>website on Notes by Grayside</title><link>https://notes.grayside.dev/tags/website/</link><description>Recent content in website on Notes by Grayside</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright 2023 Adam Ross</copyright><lastBuildDate>Wed, 01 Feb 2023 10:56:54 -0800</lastBuildDate><docs>https://validator.w3.org/feed/docs/rss2.html</docs><ttl>1440</ttl><skipHours><hour>7</hour><hour>8</hour><hour>9</hour><hour>10</hour><hour>11</hour><hour>12</hour><hour>13</hour><hour>14</hour><hour>15</hour></skipHours><atom:link href="https://notes.grayside.dev/tags/website/index.xml" rel="self" type="application/rss+xml"/><item><title>Planning notes.grayside.dev</title><link>https://notes.grayside.dev/posts/this/site/</link><pubDate>Wed, 01 Feb 2023 10:56:54 -0800</pubDate><guid>https://notes.grayside.dev/posts/this/site/</guid><description>&lt;p>I&amp;rsquo;ve wanted to restart my tech blogging practice for several years. I have been
+blocked multiple times by my own perfectionism: I tend to choose a path that
+involves customizing the tools, get a backlog of &amp;ldquo;critical tasks&amp;rdquo;, then get
+distracted before launching.&lt;/p>
+&lt;p>This time I defined a very minimal scope, launched a site with one post, and then
+began improving it. The next challenge is feeling ready to broadly share links.&lt;/p>
+&lt;h2 id="objective">Objective&lt;/h2>
+&lt;p>Build a practice of writing things down, and sharing. Get in more discussions.&lt;/p>
+&lt;h2 id="non-goals">Non-goals&lt;/h2>
+&lt;p>Produce perfectly polished posts presenting proof of professional potential.
+(I&amp;rsquo;ll launch a separate site for that if I find time to write that way.)&lt;/p>
+&lt;p>Measure things.&lt;/p>
+&lt;h2 id="mvp">MVP&lt;/h2>
+&lt;ul>
+&lt;li>Easily write, publish and link to posts&lt;/li>
+&lt;li>See lists of all posts, optionally broken down by tags&lt;/li>
+&lt;li>An RSS feed lets other people read my posts the way I prefer to read theirs&lt;/li>
+&lt;li>Site aesthetic has some personality&lt;/li>
+&lt;li>If folks like the content, they can find me on Mastodon to start a good chat&lt;/li>
+&lt;/ul>
+&lt;h2 id="categories">Categories&lt;/h2>
+&lt;ul>
+&lt;li>&lt;strong>Hosting:&lt;/strong> Where will the site &amp;amp; code live?&lt;/li>
+&lt;li>&lt;strong>Appearance:&lt;/strong> What does it look like, what does the site say about my &amp;ldquo;brand&amp;rdquo;?
+What&amp;rsquo;s the quirkiness level between the inside of my head and a business card?&lt;/li>
+&lt;li>&lt;strong>Maintenance:&lt;/strong> What will be involved in keeping this live?&lt;/li>
+&lt;li>&lt;strong>Content creation experience:&lt;/strong> How will I create and update content?&lt;/li>
+&lt;li>&lt;strong>Data:&lt;/strong> How will I back up data? Do I want to make it available for integrations?
+Will having more structured data in front matter be worthwhile?&lt;/li>
+&lt;/ul>
+&lt;h2 id="maintenance--lifecycle-considerations">Maintenance &amp;amp; Lifecycle considerations&lt;/h2>
+&lt;ul>
+&lt;li>Bursty Attention&lt;/li>
+&lt;li>Long-term site (5-10? years)&lt;/li>
+&lt;li>Long-term data (forever)&lt;/li>
+&lt;li>Minimal tools &amp;amp; expenses&lt;/li>
+&lt;li>Durable automation&lt;/li>
+&lt;li>Simplicity&lt;/li>
+&lt;/ul>
+&lt;h2 id="site-architecture--tooling">Site architecture &amp;amp; tooling&lt;/h2>
+&lt;p>I chose to use &lt;a href="https://gohugo.io">Hugo&lt;/a> as a static site generation tool.&lt;/p>
+&lt;ul>
+&lt;li>As a tool shipped as a binary, it&amp;rsquo;s likely to continue working to some extent
+even if maintenance stops&lt;/li>
+&lt;li>As a Go-based tool, I&amp;rsquo;m familiar with the templating, language, and ecosystem
+such that I will be comfortable customizing site behaviors or contributing to
+the community.&lt;/li>
+&lt;li>&lt;code>hugo serve&lt;/code> is a nice development experience&lt;/li>
+&lt;/ul>
+&lt;p>I&amp;rsquo;m using GitHub to host my code because I live there.&lt;/p>
+&lt;p>I&amp;rsquo;m using GitHub Pages to host my site:&lt;/p>
+&lt;ul>
+&lt;li>Keep number of vendors/dependencies minimal&lt;/li>
+&lt;li>Avoid managing hardware&lt;/li>
+&lt;li>Already familiar with using GitHub Workflows to work with GitHub Pages&lt;/li>
+&lt;/ul>
+&lt;h2 id="deploying-content">Deploying content&lt;/h2>
+&lt;p>As a static site, the critical day to day use case is creating and publishing
+content&lt;/p>
+&lt;p>git commit / git push is a very simple deploy model that I&amp;rsquo;m used to with code.
+Extending it to content is natural.&lt;/p>
+&lt;p>The downside of this is using GitHub on my phone to author new content is not a
+great experience. I might want to consider if there is a good app that streamlines
+content creation backed by GitHub. It may also be interesting to see if I could
+publish from a &lt;a href="https://notion.so">Notion&lt;/a> workspace.&lt;/p>
+&lt;h2 id="choosing-a-theme-and-evaluating-customizations">Choosing a Theme and Evaluating Customizations&lt;/h2>
+&lt;p>For this site, I decided to present my identity as a coder and have more fun with
+the look. I don&amp;rsquo;t anticipate posting links to it in LinkedIn or trying to impress
+employers. I&amp;rsquo;m hoping to start discussions with other techies.&lt;/p>
+&lt;p>I found the &lt;a href="https://themes.gohugo.io/themes/hugo-theme-terminal/">terminal theme&lt;/a>
+in the &lt;a href="https://themes.gohugo.io/">hugo theme gallery&lt;/a> and made a few changes:&lt;/p>
+&lt;ul>
+&lt;li>I used the theme&amp;rsquo;s built-in mechanism for customizations to add my own styling&lt;/li>
+&lt;li>I completely overrode the theme&amp;rsquo;s RSS template and I&amp;rsquo;m okay with that!&lt;/li>
+&lt;/ul>
+&lt;p>In general this theme is good. So far I&amp;rsquo;ve noticed a few drawbacks:&lt;/p>
+&lt;ul>
+&lt;li>It doesn&amp;rsquo;t produce semantic HTML5 markup&lt;/li>
+&lt;li>It&amp;rsquo;s got some accessibility and web performance optimization opportunities&lt;/li>
+&lt;li>A couple of the templates could be decomposed into more targeted partial templates
+for ease of customization&lt;/li>
+&lt;/ul>
+&lt;p>I&amp;rsquo;m avoiding customizing the theme templates because I&amp;rsquo;d really prefer to inherit
+improvements from upstream. I&amp;rsquo;m currently watching the repository to see if
+community Pull Requests are accepted.&lt;/p>
+&lt;h2 id="what-if-the-tools-go-away">What if the tools go away?&lt;/h2>
+&lt;ul>
+&lt;li>Backup the site with git clone&lt;/li>
+&lt;li>Switch the theme to many others others in Hugo, possibly set some overrides in
+configuration or frontmatter to line up with design choices&lt;/li>
+&lt;li>Switch from hugo to other static site generator: markdown with yaml front matter
+is a pretty common format and if some of the data model isn&amp;rsquo;t supported the
+migration model can be &amp;ldquo;Search and Replace&amp;rdquo;&lt;/li>
+&lt;/ul></description><category>decisions</category><category>website</category><category>static-site-generator</category><category>hugo</category><category>notes.grayside.dev</category></item></channel></rss>
