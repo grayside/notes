@@ -1,7 +1,7 @@
 ---
 title: "GitHub Actions: 'tee' is for Environment Variables"
 date: "2023-01-31T10:25:51-08:00"
-author: ""
+author: "grayside"
 authorTwitter: "" #do not include @
 cover: ""
 tags: ["til", "gha", "testing", "environment", "shell"]

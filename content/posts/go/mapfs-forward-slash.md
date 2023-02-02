@@ -1,7 +1,7 @@
 ---
 title: "Fighting the Forward Slashes with Go's MapFS"
 date: "2023-01-28T11:34:34-08:00"
-# author: ""
+author: "grayside"
 authorTwitter: "" #do not include @
 cover: ""
 tags: ["til", "golang", "testing", "bug"]

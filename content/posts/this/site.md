@@ -1,7 +1,7 @@
 ---
 title: "Planning notes.grayside.dev"
 date: "2023-02-01T10:56:54-08:00"
-author: ""
+author: "grayside"
 authorTwitter: "" #do not include @
 cover: ""
 tags: ["decisions", "website", "static-site-generator", "hugo", "notes.grayside.dev"]
