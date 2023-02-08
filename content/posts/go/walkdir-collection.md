@@ -81,18 +81,18 @@ func ImportantBusinessFunc(fsys fs.FS) ([]string, error) {
 }
 
 func _importantBusiness(fsys fs.FS, collector *[]string, needle string) error {
-    return fs.WalkDir(fsys, ".", func(path string, dir fs.DirEntry, err error) error {
-        if err != nil {
-            return err
-        }
-        
-        if !strings.HasPrefix(path, needle) {
+	return fs.WalkDir(fsys, ".", func(path string, dir fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !strings.HasPrefix(path, needle) {
 			return nil
 		}
 
-		collector = append(collector, path)
+		*collector = append(*collector, path)
 
 		return nil
-    })
+	})
 }
 ```
