@@ -5,3 +5,21 @@ h1.post-title::before {
 header a div.logo::before {
     content: ":: "
 }
+
+/* https://github.com/hugo-mods/icons/blob/main/assets/mod-icons/style.css */
+.icon {
+    width: 1em;
+    height: 1em;
+    /* Font-Awesome recommends -.125em vertical alignment (https://fontawesome.com/how-to-use/on-the-web/advanced/svg-symbols) 
+       However, I mostly find myself using the following which looks better for some icons: */
+    vertical-align: -.140em;
+    fill: currentColor;
+}
+
+nav .icon {
+    padding-right: 0.1em;
+}
+
+nav.navigation-menu {
+    margin-bottom: 5px;
+}

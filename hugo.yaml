@@ -13,6 +13,12 @@ paginate: 10
 # Enable static assets to be loaded as resources. Disables the separate use of assetDir.
 assetDir: 'static'
 
+# Modules
+
+module:
+  imports:
+    path: 'github.com/hugo-mods/icons'
+
 params:
   # dir name of your main content (default is `content/posts`).
   # the list of set content will show up on your index page (baseurl).
@@ -22,7 +28,7 @@ params:
   themeColor: 'green'
 
   # if you set this to 0, only submenu trigger will be visible
-  showMenuItems: 2
+  showMenuItems: 4
 
   # show selector to switch language
   showLanguageSelector: false
@@ -72,13 +78,12 @@ params:
   # set Twitter handles for Twitter cards
   # see https://developer.twitter.com/en/docs/tweets/optimize-with-cards/guides/getting-started#card-and-content-attribution
   # do not include @
-  # NOTE: The terminal theme sugests these settings but it may not be in use.
   twitter:
     creator: 'grayside_sb' 
     site: 'notes.grayside.dev'
 
 author:
-  name: 'grayside'
+  name: '<a href="/grayside">grayside</a>x'
   # NOTE: Only name is used.
   twitter: 'grayside_sb'
   mastodon: 'hachyderm.io/@grayside'
@@ -107,8 +112,17 @@ languages:
         logoText: 'Notes'
         logoHomLink: '/'
     
-    # menu:
-    #   main:
-    #     - identifier: 'about'
-    #       name: 'About'
-    #       url: '/about'
+    menu:
+      social:
+        - identifier: 'fediverse'
+          name: 'Fediverse'
+          pre: '<svg class="icon"><use xlink:href="#icon-mastodon"></use></svg>'
+          url: 'https://hachyderm.io/@grayside'
+        - identifier: 'GitHub'
+          name: 'GitHub'
+          pre: '<svg class="icon"><use xlink:href="#icon-github"></use></svg>'
+          url: 'https://github.com/grayside'
+        - identifier: 'twitter'
+          name: 'Twitter'
+          pre: '<svg class="icon"><use xlink:href="#icon-twitter"></use></svg>'
+          url: 'https://twitter.com/grayside_sb'
