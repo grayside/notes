@@ -24,7 +24,7 @@ Some reasons things may not be a good fit for cron:
 Today's solution? Run these tasks automatically after something else I know I will do,
 such as loading my `.bash_profile` when I open a new terminal session.
 
-## Timelock (Original)
+## Timelock
 
 My timelock script wraps is shell executable argument in checks to prevent them
 from being run more often than every 24 hours. Time is configurable by the
