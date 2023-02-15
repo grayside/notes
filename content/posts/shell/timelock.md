@@ -1,6 +1,6 @@
 ---
-title: "Timelock"
-date: "2023-02-10T11:45:44-08:00"
+title: "Timelock: Control when a command can run"
+date: "2023-02-15T11:45:44-08:00"
 author: "grayside"
 authorTwitter: "" #do not include @
 cover: ""
