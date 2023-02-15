@@ -83,7 +83,7 @@ params:
     site: 'notes.grayside.dev'
 
 author:
-  name: '<a href="/grayside">grayside</a>x'
+  name: 'grayside'
   # NOTE: Only name is used.
   twitter: 'grayside_sb'
   mastodon: 'hachyderm.io/@grayside'
