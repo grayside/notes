@@ -1,4 +1,104 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>til on Notes by Grayside</title><link>https://notes.grayside.dev/tags/til/</link><description>Recent content in til on Notes by Grayside</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright 2023 Adam Ross</copyright><lastBuildDate>Mon, 06 Feb 2023 09:18:54 -0800</lastBuildDate><docs>https://validator.w3.org/feed/docs/rss2.html</docs><ttl>1440</ttl><skipHours><hour>7</hour><hour>8</hour><hour>9</hour><hour>10</hour><hour>11</hour><hour>12</hour><hour>13</hour><hour>14</hour><hour>15</hour></skipHours><atom:link href="https://notes.grayside.dev/tags/til/index.xml" rel="self" type="application/rss+xml"/><item><title>Collecting Data while walkng a filesystem with Go</title><link>https://notes.grayside.dev/posts/go/walkdir-collection/</link><pubDate>Mon, 06 Feb 2023 09:18:54 -0800</pubDate><guid>https://notes.grayside.dev/posts/go/walkdir-collection/</guid><description>&lt;p>There are several ways to use &lt;a href="https://pkg.go.dev/io/fs#WalkDir">&lt;code>fs.WalkDir&lt;/code>&lt;/a>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>til on Notes by Grayside</title><link>https://notes.grayside.dev/tags/til/</link><description>Recent content in til on Notes by Grayside</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright 2023 Adam Ross</copyright><lastBuildDate>Fri, 10 Feb 2023 11:45:44 -0800</lastBuildDate><docs>https://validator.w3.org/feed/docs/rss2.html</docs><ttl>1440</ttl><skipHours><hour>7</hour><hour>8</hour><hour>9</hour><hour>10</hour><hour>11</hour><hour>12</hour><hour>13</hour><hour>14</hour><hour>15</hour></skipHours><atom:link href="https://notes.grayside.dev/tags/til/index.xml" rel="self" type="application/rss+xml"/><item><title>Timelock</title><link>https://notes.grayside.dev/posts/shell/timelock/</link><pubDate>Fri, 10 Feb 2023 11:45:44 -0800</pubDate><guid>https://notes.grayside.dev/posts/shell/timelock/</guid><description>&lt;p>tl;dr: Script to prevent another script from running more often than every 24 hours.&lt;/p>
+&lt;p>Some types of local developer environment operations should happen on a regular
+basis but don&amp;rsquo;t fit into cron. Things like updating &lt;a href="https://brew.sh/">homebrew dependencies&lt;/a>.&lt;/p>
+&lt;p>Some reasons things may not be a good fit for cron:&lt;/p>
+&lt;ul>
+&lt;li>You want to see what will/has happened in detail when it happens&lt;/li>
+&lt;li>You don&amp;rsquo;t want to remember how to investigate when cron operations fail&lt;/li>
+&lt;/ul>
+&lt;p>Today&amp;rsquo;s solution? Run these tasks automatically after something else I know I will do,
+such as loading my &lt;code>.bash_profile&lt;/code> when I open a new terminal session.&lt;/p>
+&lt;h2 id="timelock-original">Timelock (Original)&lt;/h2>
+&lt;p>My timelock script wraps is shell executable argument in checks to prevent them
+from being run more often than every 24 hours. Time is configurable by the
+&lt;code>TIMELOCK_DELAY_SECONDS&lt;/code> environment variable.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#!/usr/bin/env bash
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>set -eu
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">##&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># timelock.sh&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Run supplied command no more than every 24 hours.&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Usage:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># timelock.sh ~/bin/brew-install.sh&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># VERBOSE=1 timelock.sh ~/bin/brew-install.sh&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>TIMELOCK&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>TIMELOCK_DELAY_SECONDS&lt;span style="color:#66d9ef">:-&lt;/span>86400&lt;span style="color:#e6db74">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># The operation being run is the first argument sent to the timelock.&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>operation&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>basename $1&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>store&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$HOME&lt;span style="color:#e6db74">/.config/&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>whoami&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74">-bin/&lt;/span>$operation&lt;span style="color:#e6db74">.last-run&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>mkdir -p &lt;span style="color:#66d9ef">$(&lt;/span>dirname &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$store&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>last_run&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>cat &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$store&lt;span style="color:#e6db74">&amp;#34;&lt;/span> 2&amp;gt;/dev/null &lt;span style="color:#f92672">||&lt;/span> echo 0&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>now&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>date +%s&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>elapsed&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>now-last_run&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">((&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$elapsed&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &amp;lt; &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$TIMELOCK&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#f92672">))&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> lock_duration&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>eval &lt;span style="color:#e6db74">&amp;#34;echo &lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>gdate -ud &lt;span style="color:#e6db74">&amp;#34;@&lt;/span>$TIMELOCK&lt;span style="color:#e6db74">&amp;#34;&lt;/span> +&lt;span style="color:#e6db74">&amp;#39;$((%s/3600/24)) days %H hours %M minutes %S seconds&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> last_run_date&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>gdate -u -d @&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$last_run&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">[[&lt;/span> &lt;span style="color:#66d9ef">$(&lt;/span>type -t vlog&lt;span style="color:#66d9ef">)&lt;/span> &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#66d9ef">function&lt;/span> &lt;span style="color:#f92672">]]&lt;/span> &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> vlog &lt;span style="color:#e6db74">&amp;#34;timelocked (&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>operation&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">): Waiting until &lt;/span>&lt;span style="color:#e6db74">${&lt;/span>lock_duration&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74"> hours after &lt;/span>&lt;span style="color:#e6db74">${&lt;/span>last_run_date&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74"> before running&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> exit &lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">fi&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">((&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$last_run&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &amp;gt; &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#f92672">))&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> elapsed_duration&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>eval &lt;span style="color:#e6db74">&amp;#34;echo &lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>gdate -ud &lt;span style="color:#e6db74">&amp;#34;@&lt;/span>$elapsed&lt;span style="color:#e6db74">&amp;#34;&lt;/span> +&lt;span style="color:#e6db74">&amp;#39;$((%s/3600/24)) days %H hours %M minutes %S seconds&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo &lt;span style="color:#e6db74">&amp;#34;timelocked (&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>operation&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">): Running script (&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>elapsed_duration&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74"> hours since last run)&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo &lt;span style="color:#e6db74">&amp;#34;timelocked (&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>operation&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">): Running script for the first time&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">fi&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$@&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Update latest run time.&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$now&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &amp;gt; &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$store&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;code>vlog&lt;/code> is a custom function in my &lt;code>.bashrc&lt;/code>. It looks like this:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>vlog&lt;span style="color:#f92672">()&lt;/span> &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> test -z &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$VERBOSE&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#f92672">||&lt;/span> echo &lt;span style="color:#e6db74">&amp;#34;[v] &lt;/span>$@&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Make vlog available in my scripts.&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>export -f vlog
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="what-it-looks-like">What it looks like&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-txt" data-lang="txt">&lt;span style="display:flex;">&lt;span>$&amp;gt; timelock.sh echo &amp;#34;hello&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>timelocked (echo): Running script (0 days 00 hours 18 minutes 48 seconds hours since last run)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>hello
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$&amp;gt; VERBOSE=1 timelock.sh echo &amp;#34;hello&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>[v] timelocked (echo): Waiting until 1 days 00 hours 00 minutes 00 seconds hours after Tue Feb 14 05:04:15 UTC 2023 before running
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="limitations-constraints--considerations">Limitations, Constraints, &amp;amp; Considerations&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>The &amp;ldquo;&lt;a href="https://logicgrimoire.wordpress.com/2015/05/05/the-sentinel-file-pattern-3/">sentinel file&lt;/a>&amp;rdquo;
+groups commands together by the first argument.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>operation&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>basename $1&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>store&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$HOME&lt;span style="color:#e6db74">/.config/&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>whoami&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74">-bin/&lt;/span>$operation&lt;span style="color:#e6db74">.last-run&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>I use this to wrap custom scripts kept in a single directory, so I&amp;rsquo;m not
+concerned with multiple scripts with the same filename or commands with
+different arguments.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>If the timelock is active, the default is to do nothing and report nothing.
+The custom verbose logging function (vlog) allows simple debug output if
+I don&amp;rsquo;t trust the silence. (Or would, except it seems broken).&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>We&amp;rsquo;re not using &lt;code>exec&lt;/code> to run the command passed to timelock, so timelock
+variables will be available in the called script. On the other hand, when
+successful the script passes control back to timelock which can update the
+sentinel.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>I&amp;rsquo;m writing the date to the file because it&amp;rsquo;s mildly less cryptic, but at
+scale better to save the redundant storage:&lt;/p>
+&lt;ul>
+&lt;li>Create or update the sentinel: &lt;code>touch &amp;quot;$store&amp;quot;&lt;/code>&lt;/li>
+&lt;li>Read the sentinel: &lt;code>date -r &amp;quot;$store&amp;quot; +%s&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol></description><category>til</category><category>shell</category><category>sentinel</category><category>productivity</category></item><item><title>Collecting Data while walkng a filesystem with Go</title><link>https://notes.grayside.dev/posts/go/walkdir-collection/</link><pubDate>Mon, 06 Feb 2023 09:18:54 -0800</pubDate><guid>https://notes.grayside.dev/posts/go/walkdir-collection/</guid><description>&lt;p>There are several ways to use &lt;a href="https://pkg.go.dev/io/fs#WalkDir">&lt;code>fs.WalkDir&lt;/code>&lt;/a>
 to collect data.&lt;/p>
 &lt;h2 id="basic-fswalkdir">Basic &lt;code>fs.WalkDir&lt;/code>&lt;/h2>
 &lt;p>Here&amp;rsquo;s a relatively simple WalkDir to print all paths that start with &amp;ldquo;magic/&amp;rdquo;.&lt;/p>
