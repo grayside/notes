@@ -6,6 +6,7 @@ categories: ['til']
 
 description: 'Starting the hugo dev server with the correct base URL in Codespaces.'
 tags:
+    - til
     - codespaces
     - hugo
     - shell
