@@ -1,4 +1,55 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>shell on Notes by Grayside</title><link>https://notes.grayside.dev/tags/shell/</link><description>Recent content in shell on Notes by Grayside</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>Copyright 2023 Adam Ross</copyright><lastBuildDate>Wed, 15 Feb 2023 11:45:44 -0800</lastBuildDate><docs>https://validator.w3.org/feed/docs/rss2.html</docs><ttl>1440</ttl><skipHours><hour>7</hour><hour>8</hour><hour>9</hour><hour>10</hour><hour>11</hour><hour>12</hour><hour>13</hour><hour>14</hour><hour>15</hour></skipHours><atom:link href="https://notes.grayside.dev/tags/shell/index.xml" rel="self" type="application/rss+xml"/><item><title>Timelock: Control when a command can run</title><link>https://notes.grayside.dev/posts/shell/timelock/</link><pubDate>Wed, 15 Feb 2023 11:45:44 -0800</pubDate><guid>https://notes.grayside.dev/posts/shell/timelock/</guid><description>&lt;p>tl;dr: Script to prevent another script from running more often than every 24 hours.&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>shell on Notes by Grayside</title><link>https://notes.grayside.dev/tags/shell/</link><description>Recent content in shell on Notes by Grayside</description><generator>Hugo -- gohugo.io</generator><language>en</language><copyright>Copyright 2023 Adam Ross</copyright><lastBuildDate>Sat, 27 Jan 2024 20:07:57 +0000</lastBuildDate><docs>https://validator.w3.org/feed/docs/rss2.html</docs><ttl>1440</ttl><skipHours><hour>7</hour><hour>8</hour><hour>9</hour><hour>10</hour><hour>11</hour><hour>12</hour><hour>13</hour><hour>14</hour><hour>15</hour></skipHours><atom:link href="https://notes.grayside.dev/tags/shell/index.xml" rel="self" type="application/rss+xml"/><item><title>Configuring Hugo Base URL in Codespaces</title><link>https://notes.grayside.dev/posts/tools/hugo-base-url-in-codespaces/</link><pubDate>Sat, 27 Jan 2024 20:07:57 +0000</pubDate><guid>https://notes.grayside.dev/posts/tools/hugo-base-url-in-codespaces/</guid><description>&lt;p>Learning about &lt;a href="https://docs.github.com/en/codespaces/overview">Codespaces&lt;/a>,
+and more specifically, &lt;a href="https://gohugo.io/">Hugo&lt;/a> and &lt;a href="https://taskfile.dev">Taskfile&lt;/a>
+in Codespaces.&lt;/p>
+&lt;p>My theme&amp;rsquo;s starter gave me a devcontainer based on the (now archived)
+&lt;a href="https://github.com/microsoft/vscode-dev-containers/blob/main/containers/hugo">community devcontainer for Hugo&lt;/a>.&lt;/p>
+&lt;p>Running inside the codespace defined by this container, running &lt;code>hugo serve&lt;/code>
+with the Codespaces port forwarding works well. However, when run this way,
+Hugo hasn&amp;rsquo;t been configured with the correct base URL which could break
+functionality dependent on the full URL, such as validating RSS or
+single-origin scripts.&lt;/p>
+&lt;h2 id="setting-the-right-base-url-in-codespace-dev">Setting the right base URL in codespace dev&lt;/h2>
+&lt;p>Some quick research found an
+&lt;a href="https://github.com/shotor/hugo-codespaces-example?tab=readme-ov-file#debug-on-codespaces">example repository&lt;/a>
+with a README that provided the tweaks needed for the hugo command:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>hugo server --baseUrl &lt;span style="color:#e6db74">&amp;#34;https://{githubUrl}&amp;#34;&lt;/span> --appendPort&lt;span style="color:#f92672">=&lt;/span>false
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>How do you get &lt;code>githubUrl&lt;/code>?&lt;/p>
+&lt;p>There are a couple methods for this, such as going to the browser preview tab
+and copying the base URL. Pulling that into your codespace terminal, that might look like:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>githubUrl&lt;span style="color:#f92672">=&lt;/span>stellar-codespace-id-sn2ggl3bl4rn3y-1313.app.github.dev
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>hugo server --baseUrl &lt;span style="color:#e6db74">&amp;#34;https://{githubUrl}&amp;#34;&lt;/span> --appendPort&lt;span style="color:#f92672">=&lt;/span>false
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>However, that&amp;rsquo;s a manual step that&amp;rsquo;s needed almost per work session.&lt;/p>
+&lt;h2 id="zero-config-version">Zero Config Version&lt;/h2>
+&lt;p>Inspecting the terminal environment of the codespace, it turns out the pieces
+of the codespace domain are available via built-in environment variables:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>app.github.dev&lt;/strong> is sourced from &lt;code>GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN&lt;/code>&lt;/li>
+&lt;li>&lt;strong>stellar-codespace-id-sn2ggl3bl4rn3y&lt;/strong> is sourced from &lt;code>CODESPACE_NAME&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>Leaning on these variables, we can simplify the command to something with zero
+additional configuration:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>hugo server --baseURL &lt;span style="color:#e6db74">&amp;#34;https://&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>CODESPACE_NAME&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">-1313.&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span> --appendPort&lt;span style="color:#f92672">=&lt;/span>false
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Note the browser preview on this command injects the port as part of the domain, it ends up looking like:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>https://&lt;span style="color:#e6db74">${&lt;/span>CODESPACE_NAME&lt;span style="color:#e6db74">}&lt;/span>-1313.&lt;span style="color:#e6db74">${&lt;/span>GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN&lt;span style="color:#e6db74">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Where 1313 is the hugo server default port.&lt;/p>
+&lt;h2 id="bringing-this-to-taskfile">Bringing this to Taskfile&lt;/h2>
+&lt;p>I’ve started exploring the use of &lt;a href="http://taskfile.dev">taskfile.dev&lt;/a> for task management,
+and an adaptation of this command might look like:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>version: &lt;span style="color:#e6db74">&amp;#39;3&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>tasks:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cs-serve:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cmds:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - |
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> hugo server --appendPort&lt;span style="color:#f92672">=&lt;/span>false --baseURL &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> &lt;span style="color:#e6db74">&amp;#34;https://{{ .CODESPACE_NAME }}-1313.{{ .GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN }}&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> requires:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> vars: &lt;span style="color:#f92672">[&lt;/span>CODESPACE_NAME, GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN&lt;span style="color:#f92672">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Rather than make &lt;a href="https://taskfile.dev/usage/#env-files">direct use of environment variables&lt;/a>,
+I’m using &lt;a href="https://taskfile.dev/usage/#variables">taskfile variables&lt;/a>
+that inherit values from the environment. This way I can make these special
+codespace environment variables required before execution without adding
+more complex shell code.&lt;/p></description><category>til</category><category>codespaces</category><category>hugo</category><category>shell</category><category>taskfile</category></item><item><title>Timelock: Control when a command can run</title><link>https://notes.grayside.dev/posts/shell/timelock/</link><pubDate>Wed, 15 Feb 2023 11:45:44 -0800</pubDate><guid>https://notes.grayside.dev/posts/shell/timelock/</guid><description>&lt;p>tl;dr: Script to prevent another script from running more often than every 24 hours.&lt;/p>
 &lt;p>Some types of local developer environment operations should happen on a regular
 basis but don&amp;rsquo;t fit into cron. Things like updating &lt;a href="https://brew.sh/">homebrew dependencies&lt;/a>.&lt;/p>
 &lt;p>Some reasons things may not be a good fit for cron:&lt;/p>
